@@ -17,7 +17,9 @@ set t_Co=256
 syntax on                       " turn syntax highlighting on
 set wildmenu                    " turn on the completion menu
 "set number                      " turn line numbers on
-set relativenumber
+"set relativenumber
+"set number! relativenumber!
+set nu! rnu!
 set showmatch                   " highlight matching braces
 set hlsearch                    " highlight search
 set ignorecase                  " ignore case when searching
@@ -45,8 +47,8 @@ map cc <c-\>
 " main mapping, go back from definition ctag/cscope
 map TT <c-t>
 " move forward and back through matching ctags
-map <c-p> :tprevious<CR>
-map <c-n> :tnext<CR>
+map <c-l> :tprevious<CR>
+map <c-h> :tnext<CR>
 
 
 set nocompatible
