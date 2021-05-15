@@ -12,13 +12,9 @@ set backspace=indent,eol,start  " set delete and supr
 set tabstop=4                   " tab width is 4 spaces
 set shiftwidth=4                " indent also with 4 spaces
 set expandtab                   " expand tabs to spaces
-"set textwidth=80               " wrap lines at 80 chars.
 set t_Co=256
 syntax on                       " turn syntax highlighting on
 set wildmenu                    " turn on the completion menu
-"set number                      " turn line numbers on
-"set relativenumber
-"set number! relativenumber!
 set nu! rnu!
 set showmatch                   " highlight matching braces
 set hlsearch                    " highlight search
@@ -26,17 +22,20 @@ set ignorecase                  " ignore case when searching
 set nospell                     " spell settings
 set laststatus=2
 set hidden
+"set textwidth=80               " wrap lines at 80 chars.
+"set number                     " turn line numbers on
+"set relativenumber
+"set number! relativenumber!
 
+
+colorscheme pablo
+autocmd ColorScheme * highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 
 " Highlight current line cursor
-set cursorcolumn
 set cursorline
-hi CursorLine term=NONE cterm=NONE ctermbg=230
-hi CursorColumn term=NONE cterm=NONE ctermbg=230
+hi CursorLine term=bold cterm=bold guibg=Grey40
 
-"
 " Enhanced keyboard mappings
-"
 " in insert mode maps jj with <Esc>
 imap jh <Esc>
 
@@ -96,9 +95,6 @@ let g:syntastic_quiet_messages = { 'regex': 'E402' }
 autocmd BufNewFile,BufRead *.asm set filetype=nasm
 so ~/.vim/cscope_maps.vim   " sourcing scope_maps.vim
 
-colorscheme pablo
-autocmd ColorScheme * highlight ExtraWhitespace ctermbg=darkred guibg=darkred
-
 " Put a red line in column 80
 set colorcolumn=80
 highlight ColorColumn ctermbg=darkgrey
@@ -106,3 +102,6 @@ highlight ColorColumn ctermbg=darkgrey
 " Highlight trailing white spaces
 highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 match ExtraWhitespace /\s\+$/
+
+" Set color of selected text
+hi Visual term=reverse cterm=reverse guibg=red
