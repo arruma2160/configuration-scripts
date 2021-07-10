@@ -27,18 +27,17 @@ set hidden
 "set relativenumber
 "set number! relativenumber!
 
-
 colorscheme pablo
 autocmd ColorScheme * highlight ExtraWhitespace ctermbg=darkred guibg=darkred
 
 " Highlight current line cursor
 set cursorline
-hi CursorLine term=bold cterm=bold guibg=Grey40
+hi clear CursorLine
+hi CursorLineNR ctermbg=darkgray
 
-" Enhanced keyboard mappings
-" in insert mode maps jj with <Esc>
+" Keyboard mappings:
+" in insert mode maps jh with <Esc>
 imap jh <Esc>
-
 " main mapping, go to first matching ctag
 map tt <c-]>
 " cscope search
@@ -67,25 +66,12 @@ Plugin 'preservim/tagbar'
 Plugin 'kien/ctrlp.vim'
 filetype plugin indent on   " Turn our filetype functionality back on
 
-" Currently using vim-airline
-" buffer file information
-" set modeline
-" set ls=2
-" set statusline=
-" set statusline+=%<
-" set statusline+=%2*[%n%H%M%R%W]%*
-" set statusline+=%F
-" set statusline+=%=%1*%y%*%*
-" set statusline+=%10(line=%l/%L,col=%c%)
-" set statusline+=\ %P
-
-let g:airline_theme='wombat'
-let g:airline#extensions#tabline#enabled = 1
+" AirLine settings
+let g:airline_theme='badwolf'
+let g:airline#extensions#tabline#enabled=1
 let g:airline#extensions#tabline#buffer_nr_show = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
-let g:airline#extensions#tabline#formatter = 'default'
-let g:airline#extensions#tabline#fnamemod = ':t'
+let g:airline#extensions#tabline#formatter='unique_tail'
+let g:airline_powerline_fonts=1
 
 
 let g:syntastic_python_python_exec = "/usr/bin/python3"
@@ -93,7 +79,7 @@ let g:syntastic_cpp_compiler_options = ' -std=c++17'
 let g:syntastic_quiet_messages = { 'regex': 'E402' }
 
 autocmd BufNewFile,BufRead *.asm set filetype=nasm
-so ~/.vim/cscope_maps.vim   " sourcing scope_maps.vim
+so ~/.vim/cscope_maps.vim
 
 " Put a red line in column 80
 set colorcolumn=80
