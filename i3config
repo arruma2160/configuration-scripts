@@ -174,3 +174,6 @@ exec --no-startup-id feh --bg-fill ~/Pictures/tiny_buddha.jpg
 
 # Lock screen
 bindsym Mod1+shift+z exec i3lock -c 000000
+
+# Switching back and forth by pressing the same $mod + <num>
+workspace_Auto_back_and_forth yes
