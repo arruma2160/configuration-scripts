@@ -45,10 +45,6 @@ bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
 bindsym $mod+d exec dmenu_run
-# There also is the (new) i3-dmenu-desktop which only displays applications
-# shipping a .desktop file. It is a wrapper around dmenu, so you need that
-# installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym $mod+h focus left
@@ -177,13 +173,11 @@ bindsym XF86AudioMute exec --no-startup-id amixer set Master toggle
 bindsym XF86MonBrightnessUp exec xbacklight -inc 10    # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 10  # decrease screen brightness
 
-#exec --no-startup-id "/bin/bash /lhome/ruizmaa/.screenlayout/office.sh"
 exec --no-startup-id "setxkbmap es"
 exec --no-startup-id "alsactl restore"
-#exec --no-startup-id "xrandr --output DP-1-3 --brightness .7"
 
 # Set wallpaper
-exec --no-startup-id feh --bg-fill /home/st01c/pictures/mountains.jpg
+exec --no-startup-id feh --bg-scale /home/st01c/pictures/mountains.jpg
 
 # Set desktop image TODO per screen
 
@@ -194,4 +188,4 @@ bindsym Mod1+shift+z exec i3lock -c 000000
 workspace_Auto_back_and_forth yes
 
 # Disable window titlebars
-for_window [class=".*"] border pixel 0
+for_window [class=".*"] border pixel 1

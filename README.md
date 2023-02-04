@@ -7,3 +7,4 @@
 * atom-dark-256.vim     -> ~/.vim/colors/
 * atom-dark.vim         -> ~/.vim/colors/
 * zenburn.vim           -> ~/.vim/colors/
+* picom.conf            -> ~/.config/picom.conf

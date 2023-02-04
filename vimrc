@@ -86,16 +86,16 @@ so ~/.vim/cscope_maps.vim
 " --------------------------
 " Colors
 " --------------------------
-colorscheme atom-dark
+colorscheme atom-dark-256
 set background=dark
 
 " Highlight current line cursor
 set cursorline
 hi clear CursorLine
-hi CursorLine ctermbg=234
+hi CursorLine ctermbg=233
 
 " Show match but highlight black
-hi MatchParen ctermbg=black
+hi MatchParen cterm=reverse
 
 " Put a line in column 80
 set colorcolumn=80
@@ -279,11 +279,15 @@ nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 " Other configs
 " --------------------------
 " Change color of floating windows
-hi Pmenu ctermbg=2
+hi Pmenu ctermbg=4
 
 " Toggle nerdtree show/hide
 inoremap <leader>n :NERDTreeToggle<CR>
 nnoremap <leader>n :NERDTreeToggle<CR>
 
 " Nerdtree initial windows width
-let g:NERDTreeWinSize=60
+let g:NERDTreeWinSize=50
+
+" Disable transparent cursor when CocList is activated.
+" Set it to `1` if you have issue with transparent cursor:
+let g:coc_disable_transparent_cursor = 1
