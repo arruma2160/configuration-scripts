@@ -1,0 +1,5 @@
+set colorscheme snow
+set draw_borders true
+set w3m_delay 0.075
+set automatically_count_files true
+set update_tmux_title true

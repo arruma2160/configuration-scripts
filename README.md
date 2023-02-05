@@ -8,3 +8,4 @@
 * atom-dark.vim         -> ~/.vim/colors/
 * zenburn.vim           -> ~/.vim/colors/
 * picom.conf            -> ~/.config/picom.conf
+* rc.conf.ranger        -> ~/.config/ranger/rc.conf 
