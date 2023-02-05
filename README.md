@@ -9,3 +9,4 @@
 * zenburn.vim           -> ~/.vim/colors/
 * picom.conf            -> ~/.config/picom.conf
 * rc.conf.ranger        -> ~/.config/ranger/rc.conf 
+* qutebrowser.config    -> .config/qutebrowser/config.py
