@@ -53,6 +53,7 @@ Plugin 'nvie/vim-flake8'
 Plugin 'tpope/vim-fugitive'
 Plugin 'preservim/tagbar'
 Plugin 'kien/ctrlp.vim'
+Plugin 'mattn/emmet-vim'
 Plugin 'neoclide/coc.nvim'
 filetype plugin indent on   " Turn our filetype functionality back on
 
@@ -80,13 +81,38 @@ let g:syntastic_python_python_exec = "/usr/bin/python3"
 let g:syntastic_cpp_compiler_options = ' -std=c++17'
 let g:syntastic_quiet_messages = { 'regex': 'E402' }
 
+" enable just for html/css
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+
+let g:user_emmet_settings = {
+\  'variables': {'lang': 'en'},
+\  'html': {
+\    'default_attributes': {
+\      'option': {'value': v:null},
+\      'textarea': {'id': v:null, 'name': v:null, 'cols': 10, 'rows': 10},
+\    },
+\    'snippets': {
+\      'html:5': "<!DOCTYPE html>\n"
+\              ."<html lang=\"${lang}\">\n"
+\              ."<head>\n"
+\              ."\t<meta charset=\"${charset}\">\n"
+\              ."\t<title></title>\n"
+\              ."</head>\n"
+\              ."<body>\n\t${child}|\n</body>\n"
+\              ."</html>",
+\    },
+\  },
+\}
+
+
 autocmd BufNewFile,BufRead *.asm set filetype=nasm
 so ~/.vim/cscope_maps.vim
 
 " --------------------------
 " Colors
 " --------------------------
-colorscheme atom-dark-256
+colorscheme atom-dark
 set background=dark
 
 " Highlight current line cursor
@@ -107,15 +133,6 @@ match ExtraWhitespace /\s\+$/
 
 " Set color of selected text
 hi Visual term=reverse cterm=reverse
-
-" --------------------------
-" Vifm
-" --------------------------
-map <leader>vv  :Vimfm<CR>
-map <leader>vs  :VsplitVifm<CR>
-map <leader>sp  :SplitVifm<CR>
-map <leader>dv  :DiffVifm<CR>
-map <leader>tv  :TabVifm<CR>
 
 " --------------------------
 " Coc Vim
