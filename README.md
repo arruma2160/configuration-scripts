@@ -10,3 +10,4 @@
 * picom.conf            -> ~/.config/picom.conf
 * rc.conf.ranger        -> ~/.config/ranger/rc.conf 
 * qutebrowser.config    -> .config/qutebrowser/config.py
+* nvim/init.lua         -> .config/nvim/

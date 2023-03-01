@@ -7,7 +7,7 @@ vim.wo.number = true
 vim.wo.relativenumber = true
 vim.opt.title = true
 vim.opt.autoindent = true
-vim.opt.hlsearch = true
+vim.opt.hlsearch = false
 vim.opt.backup = true
 vim.opt.showcmd = true
 vim.opt.cmdheight = 1
@@ -19,6 +19,8 @@ vim.opt.smarttab = true
 vim.opt.breakindent = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
+vim.opt.swapfile = false
+vim.opt.numberwidth = 6
 vim.opt.ai = true -- Auto indent
 vim.opt.si = true -- Smart indent
 vim.opt.wrap = false -- No wrap lines
@@ -40,7 +42,7 @@ vim.opt.wildoptions = 'pum'
 vim.opt.background = 'dark'
 
 -- Remapping
-vim.opt.tm = 500 -- timeout one key command
+vim.opt.tm = 700 -- timeout one key command
 vim.g.mapleader = ' '
 vim.keymap.set('i', 'jh', '<Esc>', { noremap = true})
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
@@ -62,7 +64,69 @@ vim.keymap.set('n', 'rk', '<C-w>+')
 vim.keymap.set('n', 'rj', '<C-w>-')
 
 -- Plugings / Packer package manager
-require('plugins')
+local status, _ = pcall(require, 'packer')
+if (not status) then
+  print('Packer is not installed')
+  return
+end
+
+vim.cmd [[ packadd packer.nvim ]]
+
+require('packer').startup(function(use)
+  -- Packer can manage itself
+  use 'wbthomason/packer.nvim'
+
+  -- Color scheme
+  use 'ellisonleao/gruvbox.nvim'
+
+  -- Statusline
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+  }
+
+  -- Language servers
+  use {
+    'neovim/nvim-lspconfig',
+    requires = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      -- Useful status updates for LSP
+      -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
+      { 'j-hui/fidget.nvim', opts = {} },
+      -- Additional lua configuration, makes nvim stuff amazing!
+      'folke/neodev.nvim',
+    }
+  }
+
+  -- Autocomplition
+  use {'hrsh7th/nvim-cmp',
+    requires = {
+      'hrsh7th/cmp-nvim-lsp',
+      'L3MON4D3/LuaSnip',
+      'saadparwaiz1/cmp_luasnip'
+    }
+  }
+
+  -- Add indentation guides even on blank lines
+  use 'lukas-reineke/indent-blankline.nvim'
+
+  -- Fuzzy Finder (files, lsp, etc)
+  use 'nvim-lua/plenary.nvim'
+  use 'nvim-telescope/telescope.nvim'
+  use 'nvim-telescope/telescope-file-browser.nvim'
+  use 'BurntSushi/ripgrep'
+  use {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && '..
+          'cmake --build build --config Release && cmake --install build --prefix build'
+  }
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+  }
+  use 'nvim-treesitter/playground'
+end)
 
 -- Status line
 require('lualine').setup({
@@ -121,10 +185,10 @@ require('gruvbox').setup({
   contrast = "", -- can be "hard", "soft" or empty string
   palette_overrides = {},
   dim_inactive = false,
-  transparent_mode = false,
+  transparent_mode = true,
   overrides = {
-    Normal = { bg = "#000000" },
-    Visual = { bg = "#001816" },
+    -- Normal = { bg = "#000000" },
+    Visual = { bg = "#013d2f" },
     String = { italic = true, fg= "#c3c71c" },
     CursorLine = { bold = true, bg = "#001816" },
     Comment = { bold = true, fg = "#676978" },
