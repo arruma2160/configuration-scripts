@@ -26,7 +26,7 @@ vim.opt.breakindent = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 vim.opt.swapfile = false
-vim.opt.numberwidth = 6
+vim.opt.numberwidth = 4
 vim.opt.ai = true -- Auto indent
 vim.opt.si = true -- Smart indent
 vim.opt.wrap = false -- No wrap lines
@@ -68,6 +68,15 @@ vim.keymap.set('n', 'rh', '<C-w><')
 vim.keymap.set('n', 'rl', '<C-w>>')
 vim.keymap.set('n', 'rk', '<C-w>+')
 vim.keymap.set('n', 'rj', '<C-w>-')
+
+-- Diagnostics
+vim.diagnostic.config({
+  virtual_text = {
+    -- source = "always",  -- Or "if_many"
+    prefix = '■', -- Could be '■', '▎', 'x', '●'
+  },
+  underline = false,
+})
 
 
 --
@@ -137,6 +146,7 @@ require('packer').startup(function(use)
   }
   use 'nvim-treesitter/playground'
 
+  -- Highlight word under cursor
   use 'RRethy/vim-illuminate'
 
 end)
@@ -344,7 +354,7 @@ require('lspconfig')['pylsp'].setup{
     pylsp = {
       plugins = {
         pycodestyle = {
-          ignore = {'W391'},
+          ignore = {'W391', 'E265'},
         }
       }
     }
@@ -363,6 +373,8 @@ require('lspconfig')['clangd'].setup{
 }
 
 require('lspconfig')['lua_ls'].setup{
+  on_attach = on_attach,
+  flags = lsp_flags,
   settings = {
     Lua = {
       runtime = {
@@ -385,6 +397,7 @@ require('lspconfig')['lua_ls'].setup{
     },
   },
 }
+
 
 --
 -- Indentation marker
