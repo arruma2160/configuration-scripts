@@ -1,5 +1,9 @@
 vim.cmd('autocmd!')
 
+--
+-- General configuration paramters
+--
+
 vim.scriptencoding = 'utf-8'
 vim.opt.encoding = 'utf-8'
 vim.opt.fileencoding = 'utf-8'
@@ -9,6 +13,8 @@ vim.opt.title = true
 vim.opt.autoindent = true
 vim.opt.hlsearch = false
 vim.opt.backup = true
+vim.opt.backupdir = vim.fn.stdpath('config') .. '/.backup'
+vim.opt.directory = vim.fn.stdpath('config') .. '/.swp'
 vim.opt.showcmd = true
 vim.opt.cmdheight = 1
 vim.opt.laststatus = 2
@@ -63,9 +69,13 @@ vim.keymap.set('n', 'rl', '<C-w>>')
 vim.keymap.set('n', 'rk', '<C-w>+')
 vim.keymap.set('n', 'rj', '<C-w>-')
 
+
+--
 -- Plugings / Packer package manager
-local status, _ = pcall(require, 'packer')
-if (not status) then
+--
+
+local packer_status, _ = pcall(require, 'packer')
+if (not packer_status) then
   print('Packer is not installed')
   return
 end
@@ -85,6 +95,15 @@ require('packer').startup(function(use)
     requires = { 'kyazdani42/nvim-web-devicons', opt = true }
   }
 
+  -- Autocompletion
+  use 'hrsh7th/nvim-cmp' -- Completion plugin
+  use 'hrsh7th/cmp-buffer'  -- buffer completions
+  use 'hrsh7th/cmp-path'  -- path completions
+  use 'hrsh7th/cmp-cmdline'  -- cmdline completions
+  use 'hrsh7th/cmp-nvim-lsp'  -- nvim-cmp source for neovim's built-in LSP
+  use 'saadparwaiz1/cmp_luasnip' -- snippet completions
+  use { 'L3MON4D3/LuaSnip', run = 'make install_jsregexp' }  -- Snippets
+
   -- Language servers
   use {
     'neovim/nvim-lspconfig',
@@ -96,15 +115,6 @@ require('packer').startup(function(use)
       { 'j-hui/fidget.nvim', opts = {} },
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
-    }
-  }
-
-  -- Autocomplition
-  use {'hrsh7th/nvim-cmp',
-    requires = {
-      'hrsh7th/cmp-nvim-lsp',
-      'L3MON4D3/LuaSnip',
-      'saadparwaiz1/cmp_luasnip'
     }
   }
 
@@ -126,7 +136,45 @@ require('packer').startup(function(use)
     run = ':TSUpdate'
   }
   use 'nvim-treesitter/playground'
+
+  use 'RRethy/vim-illuminate'
+
 end)
+
+
+--
+-- Colorscheme
+--
+
+require('gruvbox').setup({
+  undercurl = true,
+  underline = true,
+  bold = true,
+  italic = true,
+  strikethrough = true,
+  invert_selection = false,
+  invert_signs = false,
+  invert_tabline = false,
+  invert_intend_guides = false,
+  inverse = true, -- invert background for search, diffs, statuslines and errors
+  contrast = "", -- can be "hard", "soft" or empty string
+  palette_overrides = {},
+  dim_inactive = false,
+  transparent_mode = true,
+  overrides = {
+    -- Normal = { bg = "#000000" },
+    Visual = { bg = "#013d2f" },
+    String = { italic = true, fg= "#c3c71c" },
+    CursorLine = { bold = true, bg = "#001816" },
+    Comment = { bold = true, fg = "#676978" },
+    errorMsg = { bg = "#cf0000" },
+    DiagnosticVirtualTextError = { fg = "#fc0303" },
+    IlluminatedWordText = { bg = '#013d2f', bold = true },
+    IlluminatedWordRead = { bg = '#013d2f', bold = true },
+    IlluminatedWordWrite = { bg = '#013d2f', bold = true },
+  }
+})
+vim.cmd([[colorscheme gruvbox]])
 
 -- Status line
 require('lualine').setup({
@@ -170,37 +218,82 @@ require('lualine').setup({
   extensions = {}
 })
 
--- Colorscheme
-require('gruvbox').setup({
-  undercurl = true,
-  underline = true,
-  bold = true,
-  italic = true,
-  strikethrough = true,
-  invert_selection = false,
-  invert_signs = false,
-  invert_tabline = false,
-  invert_intend_guides = false,
-  inverse = true, -- invert background for search, diffs, statuslines and errors
-  contrast = "", -- can be "hard", "soft" or empty string
-  palette_overrides = {},
-  dim_inactive = false,
-  transparent_mode = true,
-  overrides = {
-    -- Normal = { bg = "#000000" },
-    Visual = { bg = "#013d2f" },
-    String = { italic = true, fg= "#c3c71c" },
-    CursorLine = { bold = true, bg = "#001816" },
-    Comment = { bold = true, fg = "#676978" },
-    errorMsg = { bg = "#cf0000" }
-  }
-})
-vim.cmd([[colorscheme gruvbox]])
 
+--
 -- LSP manager
+--
+
 require('mason').setup()
 
+
+--
+-- nvim-cmp
+--
+
+-- Add additional capabilities supported by nvim-cmp
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+local lspconfig = require('lspconfig')
+
+-- Enable some language servers with the additional completion capabilities offered by nvim-cmp
+local servers = { 'clangd', 'rust_analyzer', 'pylsp', 'tsserver' }
+for _, lsp in ipairs(servers) do
+  lspconfig[lsp].setup {
+    -- on_attach = my_custom_on_attach,
+    capabilities = capabilities,
+  }
+end
+
+-- luasnip setup
+local luasnip = require 'luasnip'
+
+-- nvim-cmp setup
+local cmp = require 'cmp'
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Up
+    ['<C-d>'] = cmp.mapping.scroll_docs(4), -- Down
+    -- C-b (back) C-f (forward) for snippet placeholder navigation.
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+  }),
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  },
+}
+
+
+--
 -- Mappings.
+--
+
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, opts)
@@ -234,24 +327,42 @@ local on_attach = function(_, bufnr)
   vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format { async = true } end, bufopts)
 end
 
+
+--
+-- LSP
+--
+
 local lsp_flags = {
   -- This is the default in Nvim 0.7+
   debounce_text_changes = 150,
 }
-require('lspconfig')['jedi_language_server'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
+
+require('lspconfig')['pylsp'].setup{
+  on_attach = on_attach,
+  flags = lsp_flags,
+  settings = {
+    pylsp = {
+      plugins = {
+        pycodestyle = {
+          ignore = {'W391'},
+        }
+      }
+    }
+  }
 }
+
 require('lspconfig')['tsserver'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
+  on_attach = on_attach,
+  flags = lsp_flags,
 }
+
 require('lspconfig')['clangd'].setup{
-    -- relies on a Json compilation database specified as compile_commands.json
-    on_attach = on_attach,
-    flags = lsp_flags,
+  -- relies on a Json compilation database specified as compile_commands.json
+  on_attach = on_attach,
+  flags = lsp_flags,
 }
-require('lspconfig')['lua_ls'].setup {
+
+require('lspconfig')['lua_ls'].setup{
   settings = {
     Lua = {
       runtime = {
@@ -265,6 +376,7 @@ require('lspconfig')['lua_ls'].setup {
       workspace = {
         -- Make the server aware of Neovim runtime files
         library = vim.api.nvim_get_runtime_file("", true),
+        checkThirdParty = false,
       },
       -- Do not send telemetry data containing a randomized but unique identifier
       telemetry = {
@@ -273,14 +385,25 @@ require('lspconfig')['lua_ls'].setup {
     },
   },
 }
+
+--
+-- Indentation marker
+--
+
 require('indent_blankline').setup( {
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    }
+  -- See `:help indent_blankline.txt`
+  opts = {
+    char = '┊',
+    show_trailing_blankline_indent = false,
+  }
 })
 
+
+--
+-- Telescope
+--
+
+local telescope_actions = require('telescope.actions')
 require('telescope').setup{
   defaults = {
     -- Default configuration for telescope goes here:
@@ -292,6 +415,15 @@ require('telescope').setup{
         -- e.g. git_{create, delete, ...}_branch for the git_branches picker
         ['<C-u>'] = false,
         ['<C-d>'] = false,
+        ['<Esc>'] = telescope_actions.close
+      }
+    },
+    layout_strategy = 'vertical',
+    layout_config = {
+      vertical = {
+        width = 0.8,
+        preview_cutoff = 10,
+        height = 0.9
       }
     }
   },
@@ -320,9 +452,63 @@ require('telescope').setup{
   }
 }
 
+-- Remappings for telescope
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files)   -- '[S]earch [F]iles'
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags)    -- '[S]earch [H]elp'
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string)  -- '[S]earch current [W]ord'
 vim.keymap.set('n', '<C-p>', require('telescope.builtin').git_files)         -- Search in git repo
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep)    -- '[S]earch by [G]rep'
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics)  -- '[S]earch [D]iagnostics'
+
+
+--
+-- vim-iluminate
+--
+
+-- default configuration
+require('illuminate').configure({
+    -- providers: provider used to get references in the buffer, ordered by priority
+    providers = {
+        'lsp',
+        'treesitter',
+        'regex',
+    },
+    -- delay: delay in milliseconds
+    delay = 100,
+    -- filetype_overrides: filetype specific overrides.
+    -- The keys are strings to represent the filetype while the values are tables that
+    -- supports the same keys passed to .configure except for filetypes_denylist and filetypes_allowlist
+    filetype_overrides = {},
+    -- filetypes_denylist: filetypes to not illuminate, this overrides filetypes_allowlist
+    filetypes_denylist = {
+        'dirvish',
+        'fugitive',
+    },
+    -- filetypes_allowlist: filetypes to illuminate, this is overriden by filetypes_denylist
+    filetypes_allowlist = {},
+    -- modes_denylist: modes to not illuminate, this overrides modes_allowlist
+    -- See `:help mode()` for possible values
+    modes_denylist = {},
+    -- modes_allowlist: modes to illuminate, this is overriden by modes_denylist
+    -- See `:help mode()` for possible values
+    modes_allowlist = {},
+    -- providers_regex_syntax_denylist: syntax to not illuminate, this overrides providers_regex_syntax_allowlist
+    -- Only applies to the 'regex' provider
+    -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+    providers_regex_syntax_denylist = {},
+    -- providers_regex_syntax_allowlist: syntax to illuminate, this is overriden by providers_regex_syntax_denylist
+    -- Only applies to the 'regex' provider
+    -- Use :echom synIDattr(synIDtrans(synID(line('.'), col('.'), 1)), 'name')
+    providers_regex_syntax_allowlist = {},
+    -- under_cursor: whether or not to illuminate under the cursor
+    under_cursor = true,
+    -- large_file_cutoff: number of lines at which to use large_file_config
+    -- The `under_cursor` option is disabled when this cutoff is hit
+    large_file_cutoff = nil,
+    -- large_file_config: config to use for large files (based on large_file_cutoff).
+    -- Supports the same keys passed to .configure
+    -- If nil, vim-illuminate will be disabled for large files.
+    large_file_overrides = nil,
+    -- min_count_to_highlight: minimum number of matches required to perform highlighting
+    min_count_to_highlight = 1,
+})
